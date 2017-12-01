@@ -24,9 +24,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   
   // MARK: - SKScene
   
-    override func didMove(to view: SKView) {
+  override func didMove(to view: SKView) {
     // Setup physics world's contact delegate
     physicsWorld.contactDelegate = self
+    
+    // Set up player
+    player = self.childNode(withName: "player") as? SKSpriteNode
+    listener = player
+    
+    // Set up goal
+    goal = childNode(withName: "goal") as? SKSpriteNode
+    
+    // Set up zombies
+    for child in self.children {
+        if child.name == "zombie" {
+            if let child = child as? SKSpriteNode {
+                // Add SKAudioNode to zombie
+                let audioNode = SKAudioNode(fileNamed: "fear_moan.wav")
+                child.addChild(audioNode)
+                zombies.append(child)
+            }
+        }
+    }
     
     // Setup initial camera position
     updateCamera()
@@ -125,7 +144,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
   
   // MARK: - SKPhysicsContactDelegate
   
-  func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
     // 1. Create local variables for two physics bodies
     var firstBody: SKPhysicsBody
     var secondBody: SKPhysicsBody
